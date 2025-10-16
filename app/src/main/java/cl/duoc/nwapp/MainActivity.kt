@@ -1,47 +1,47 @@
 package cl.duoc.nwapp
 
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import cl.duoc.nwapp.ui.*
 import cl.duoc.nwapp.ui.theme.NWAPPTheme
+import cl.duoc.nwapp.viewmodel.FormularioViewModel
+import cl.duoc.nwapp.ui.theme.Formulario
+import androidx.activity.viewModels
+
+
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModelForm = FormularioViewModel()
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            NWAPPTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "NWAPP2",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+            NWAPPTheme{ // <- aquí va el nombre de TU TEMA, lo puedes encontrar en ui/theme/Theme.kt
+
+
+                Formulario()
+                //BotonCargando()
+                //TextoInvertido()
+                //Persistencia()
+                //UsuarioFormScreen()
+                //Modal()
+                // Formulario()
+                //Login()
+                //Navegacion()
+                //CamaraFotos()
+                //ModalScreen()
+                // GPS()
+                //AgregarUsuarios()
+                // TocarPantalla()
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    NWAPPTheme {
-        Greeting("Android")
-    }
+
 }
