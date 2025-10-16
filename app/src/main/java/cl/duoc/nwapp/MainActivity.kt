@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
             NWAPPTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
-                        name = "Android",
+                        name = "NWAPP",
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
