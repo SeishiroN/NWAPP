@@ -28,7 +28,7 @@ import androidx.navigation.NavController
 
 
 @Composable
-fun Formulario(viewModel: FormularioViewModel,navController:NavController) {
+fun Formulario(viewModel: FormularioViewModel) {
 
     var abrirModal by remember { mutableStateOf(false) }
 
@@ -93,13 +93,11 @@ fun Formulario(viewModel: FormularioViewModel,navController:NavController) {
                 }
             )
         }
-
         Button(
-            onClick = {
-                navController.navigate("crear_user")
-            }
+            onClick = {}
         ) {
-            Text("Crear User")
+            Text("Registrar")
         }
+
     }
 }

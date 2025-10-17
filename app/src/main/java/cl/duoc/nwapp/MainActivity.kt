@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 
 
 
+
 class MainActivity : ComponentActivity() {
 
     private val viewModelForm = FormularioViewModel()
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
             NWAPPTheme{ // <- aquí va el nombre de TU TEMA, lo puedes encontrar en ui/theme/Theme.kt
 
 
-                Formulario()
+                Formulario(viewModelForm)
                 //BotonCargando()
                 //TextoInvertido()
                 //Persistencia()
