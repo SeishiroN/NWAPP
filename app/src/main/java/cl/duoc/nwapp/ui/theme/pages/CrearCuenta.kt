@@ -94,7 +94,7 @@ fun FormularioCrearCuenta(
             )
         }
         Button(
-            onClick = {},
+            onClick = {navController.navigate("pagina3")},
         ) {
             Text("Registrar")
         }

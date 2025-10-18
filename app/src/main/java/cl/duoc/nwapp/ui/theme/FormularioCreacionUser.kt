@@ -93,13 +93,5 @@ fun Formulario2(viewModel: FormularioViewModel,navController:NavController) {
                 }
             )
         }
-
-        Button(
-            onClick = {
-                navController.navigate("crear_user")
-            }
-        ) {
-            Text("Crear User")
-        }
     }
 }

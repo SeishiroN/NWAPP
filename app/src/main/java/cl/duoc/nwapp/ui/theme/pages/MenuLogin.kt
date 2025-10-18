@@ -25,11 +25,12 @@ fun PrimeraPantalla(navController: NavController) {
 
         Image(
             painter = painterResource(id = R.drawable.nwa),
-            contentDescription = "Imagen de un gato",
+            contentDescription = "Logo de la APP",
             contentScale = ContentScale.Crop,
         )
         Button(onClick = { navController.navigate("pagina2") }) {
-            Text("Registrarse")
+            Text("Logearse")
         }
+
     }
 }
