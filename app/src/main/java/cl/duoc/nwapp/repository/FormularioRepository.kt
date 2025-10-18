@@ -18,7 +18,7 @@ class  FormularioRepository {
     }
 
     fun validacionNombre(): Boolean {
-        if(formulario.nombre=="")
+        if(formulario.nombre!="ADMIN")
             return false
         else
             return true
