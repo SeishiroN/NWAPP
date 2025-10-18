@@ -1,16 +1,22 @@
 package cl.duoc.nwapp.repository
 
 import cl.duoc.nwapp.model.FormularioModel
+import cl.duoc.nwapp.model.FormularioModelDao
 import cl.duoc.nwapp.model.MensajesError
 
 
-class  FormularioRepository {
+class  FormularioRepository(private val dao: FormularioModelDao) {
 
     private var formulario = FormularioModel()
     private var errores = MensajesError()
 
     fun getFormulario():  FormularioModel = formulario
     fun getMensajesError():  MensajesError = errores
+
+    suspend fun registrar(nombre:String,correo:String,edad:Int,terminos:Boolean){
+        val form = FormularioModel(nombre=nombre, correo = correo, edad=edad, terminos=terminos)
+        this.dao.insert(form)
+    }
 
 
     fun cambiarNombre(nuevoNombre: String) {
@@ -47,4 +53,12 @@ class  FormularioRepository {
     }
 
 
-}
+
+
+
+
+    }
+
+
+
+

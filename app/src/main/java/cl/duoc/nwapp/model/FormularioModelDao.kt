@@ -4,15 +4,15 @@ import androidx.room.*
 
 @Dao
 interface FormularioModelDao {
-    @Query("SELECT * FROM FormularioModel LIMIT 3")
-    suspend fun getAll(): List<Cancion>
+    @Query("SELECT * FROM  personas LIMIT 3")
+    suspend fun getAll(): List< FormularioModel>
 
     @Insert
-    suspend fun insert(cancion: Cancion)
+    suspend fun insert(formulariomodel:  FormularioModel)
 
     @Update
-    suspend fun update(cancion: Cancion)
+    suspend fun update(formulariomodel:  FormularioModel)
 
     @Delete
-    suspend fun delete(cancion: Cancion)
+    suspend fun delete(formulariomodel:  FormularioModel)
 }

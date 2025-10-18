@@ -1,16 +1,13 @@
 package cl.duoc.nwapp.model
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-
-
-class FormularioModel {
-    var nombre by mutableStateOf("")
-    var correo by mutableStateOf("")
-    var edad by mutableStateOf("")
-    var terminos by mutableStateOf(false)
-}
+@Entity(tableName = "personas")
+data class FormularioModel(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    var nombre: String,
+    var correo: String,
+    var edad: Int,
+    val terminos: Boolean
+)
