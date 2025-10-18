@@ -7,12 +7,26 @@ import androidx.lifecycle.ViewModel
 import cl.duoc.nwapp.repository.FormularioRepository
 import cl.duoc.nwapp.model.FormularioModel
 import cl.duoc.nwapp.model.MensajesError
+import cl.duoc.nwapp.utils.Validacion
+import kotlinx.coroutines.flow.MutableStateFlow
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
-class FormularioViewModel : ViewModel() {
-    private val repository = FormularioRepository()
 
-    var formulario: FormularioModel by mutableStateOf( repository.getFormulario() )
+
+class FormularioViewModel(private val repository: FormularioRepository) : ViewModel() {
+
+    val validation = Validacion()
+//    var formulario: FormularioModel by mutableStateOf( repository.getFormulario() )
     var mensajesError: MensajesError by mutableStateOf( repository.getMensajesError() )
+
+    val nombre = MutableStateFlow("")
+    val correo = MutableStateFlow("")
+    val edad = MutableStateFlow("")
+    val terminos = MutableStateFlow(false)
+
+    var respuesta = mutableStateOf(false)
 
     fun verificarFormulario(): Boolean {
         return verificarNombre() &&
@@ -20,51 +34,56 @@ class FormularioViewModel : ViewModel() {
                 verificarEdad() &&
                 verificarTerminos()
     }
-
     fun verificarNombre(): Boolean {
-        if (!repository.validacionNombre()) {
+        if (!validation.validacionNombre(nombre.value)) {
             mensajesError.nombre = "El nombre debe ser el de un usuario registradoo"
             return false
         } else {
             mensajesError.nombre = ""
             return true
         }
-        return repository.validacionNombre()
+
     }
 
     fun verificarCorreo(): Boolean {
-        if(!repository.validacionCorreo()) {
+        if(!validation.validacionCorreo(correo.value)) {
             mensajesError.correo = "El correo no es válido"
             return false
         } else {
             mensajesError.correo = ""
             return true
         }
-        return repository.validacionCorreo()
+
     }
 
     fun verificarEdad(): Boolean {
-        if(!repository.validacionEdad()) {
+        if(!validation.validacionEdad(edad.value.toInt())) {
             mensajesError.edad = "La edad debe ser un número entre 0 y 120"
             return false
         } else {
             mensajesError.edad = ""
             return true
         }
-        return repository.validacionEdad()
+
     }
 
     fun verificarTerminos(): Boolean {
-        if(!repository.validacionTerminos()) {
+        if(!validation.validacionTerminos(terminos.value)) {
             mensajesError.terminos = "Debes aceptar los términos"
             return false
         } else {
             mensajesError.terminos = ""
             return true
         }
-        return repository.validacionTerminos()
     }
+    fun login(){
+        viewModelScope.launch{
+        var respuesta_login= repository.login(nombre.value,correo.value)
+            respuesta.value= respuesta_login
 
 
+        }
+
+    }
 
 }

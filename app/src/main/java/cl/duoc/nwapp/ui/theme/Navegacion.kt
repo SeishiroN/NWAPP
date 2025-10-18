@@ -23,7 +23,6 @@ import androidx.navigation.compose.rememberNavController
 import cl.duoc.nwapp.R
 import cl.duoc.nwapp.ui.theme.pages.*
 import cl.duoc.nwapp.viewmodel.FormularioViewModel
-import cl.duoc.nwapp.viewmodel.FormularioCreacionUserViewModel
 
 @Composable
 fun Navegacion() {
@@ -34,11 +33,11 @@ fun Navegacion() {
             val viewModel: FormularioViewModel = viewModel()
             FormularioCrearCuenta(viewModel, navController)
         }
-        composable("pagina3"){
-            val viewModel: FormularioCreacionUserViewModel = viewModel()
-
-
+        composable("pagina3") {
+                    val viewModel: FormularioViewModel = viewModel()
+                    FormularioCrearCuenta(viewModel, navController)
         }
+
         // insertar más páginas a futuro, todas en "ui.theme/pages", siguiendo la lógica de las anteriores
     }
 }

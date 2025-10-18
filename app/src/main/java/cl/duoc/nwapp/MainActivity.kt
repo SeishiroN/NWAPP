@@ -11,7 +11,7 @@ import androidx.activity.viewModels
 import cl.duoc.nwapp.ui.theme.Navegacion
 
 class MainActivity : ComponentActivity() {
-    private val viewModelForm = FormularioViewModel()
+    //private val viewModelForm = FormularioViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

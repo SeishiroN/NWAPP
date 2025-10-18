@@ -12,6 +12,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +32,11 @@ fun FormularioCrearCuenta(
 ) {
     var abrirModal by remember { mutableStateOf(false) }
 
+    val nombre by viewModel.nombre.collectAsState()
+    val correo by viewModel.correo.collectAsState()
+    val edad by viewModel.edad.collectAsState()
+    val terminos by viewModel.terminos.collectAsState()
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -46,57 +52,59 @@ fun FormularioCrearCuenta(
         )
 
         OutlinedTextField(
-            value = viewModel.formulario.nombre,
-            onValueChange = { viewModel.formulario.nombre = it },
+            value = nombre,
+            onValueChange = { viewModel.nombre.value = it },
             label = { Text("Ingresa nombre") },
             isError = !viewModel.verificarNombre(),
             supportingText = { Text(viewModel.mensajesError.nombre, color = androidx.compose.ui.graphics.Color.Red) },
         )
         OutlinedTextField(
-            value = viewModel.formulario.correo,
-            onValueChange = { viewModel.formulario.correo = it },
+            value = correo,
+            onValueChange = { viewModel.correo.value = it },
             label = { Text("Ingresa correo") },
             isError = !viewModel.verificarCorreo(),
             supportingText = { Text(viewModel.mensajesError.correo, color = androidx.compose.ui.graphics.Color.Red) },
         )
         OutlinedTextField(
-            value = viewModel.formulario.edad,
-            onValueChange = { viewModel.formulario.edad = it },
+            value = edad,
+            onValueChange = { viewModel.edad.value = it },
             label = { Text("Ingresa edad") },
             isError = !viewModel.verificarEdad(),
             supportingText = { Text(viewModel.mensajesError.edad, color = androidx.compose.ui.graphics.Color.Red) },
         )
         Checkbox(
-            checked = viewModel.formulario.terminos,
-            onCheckedChange = { viewModel.formulario.terminos = it },
+            checked = terminos,
+            onCheckedChange = { viewModel.terminos.value = it },
         )
         Text("Acepta los términos")
 
         Button(
             enabled = viewModel.verificarFormulario(),
             onClick = {
-                if (viewModel.verificarFormulario()) {
-                    abrirModal = true
+                if (viewModel.verificarFormulario()){
+                    viewModel.login()
                 }
-            },
+                }
+            ,
         ) {
             Text("Ingresar")
         }
 
-        if (abrirModal) {
+        if (viewModel.respuesta.value) {
             AlertDialog(
                 onDismissRequest = { },
                 title = { Text("Confirmación") },
                 text = { Text("Usted puede ingresar a la aplicación") },
                 confirmButton = {
-                    Button(onClick = { abrirModal = false }) { Text("OK") }
+                    Button(onClick = { viewModel.respuesta.value = false }) { Text("OK") }
                 },
             )
         }
-        Button(
-            onClick = {navController.navigate("pagina3")},
-        ) {
-            Text("Registrar")
+
+        Button(onClick = { navController.navigate("pagina3") }) {
+            Text("dsklakdsaj")
         }
+
+
     }
 }
