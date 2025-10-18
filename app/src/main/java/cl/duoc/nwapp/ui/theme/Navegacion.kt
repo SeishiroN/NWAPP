@@ -1,5 +1,6 @@
 package cl.duoc.nwapp.ui.theme
 
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,5 +40,20 @@ fun Navegacion() {
 
         }
         // insertar más páginas a futuro, todas en "ui.theme/pages", siguiendo la lógica de las anteriores
+    }
+}
+
+@Composable
+fun Pagina2(navController: NavController) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Bienvenido a la página 2")
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = { navController.navigate("pagina1") }) {
+            Text("Ir a la primera página")
+        }
     }
 }

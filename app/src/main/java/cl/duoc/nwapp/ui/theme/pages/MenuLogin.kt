@@ -31,6 +31,5 @@ fun PrimeraPantalla(navController: NavController) {
         Button(onClick = { navController.navigate("pagina2") }) {
             Text("Logearse")
         }
-
     }
 }
