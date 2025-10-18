@@ -23,7 +23,7 @@ class FormularioViewModel : ViewModel() {
 
     fun verificarNombre(): Boolean {
         if (!repository.validacionNombre()) {
-            mensajesError.nombre = "El nombre debe ser el de un usuario registrado"
+            mensajesError.nombre = "El nombre debe ser el de un usuario registradoo"
             return false
         } else {
             mensajesError.nombre = ""
