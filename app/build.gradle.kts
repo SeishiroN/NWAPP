@@ -42,10 +42,10 @@ android {
         compose = true
     }
 }
-val nav_version = "2.9.5"
 
+val nav_version = "2.9.5"
 dependencies {
-    //def val nav_version = "2.7.7"
+
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
 
