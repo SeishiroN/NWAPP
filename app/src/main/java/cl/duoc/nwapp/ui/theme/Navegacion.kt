@@ -1,7 +1,6 @@
 package cl.duoc.nwapp.ui.theme
 
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,18 +11,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import cl.duoc.nwapp.R
 import cl.duoc.nwapp.ui.theme.pages.*
 import cl.duoc.nwapp.viewmodel.FormularioViewModel
 import cl.duoc.nwapp.viewmodel.FormularioCreacionUserViewModel
+
 
 @Composable
 fun Navegacion() {
@@ -38,6 +35,9 @@ fun Navegacion() {
             val viewModel: FormularioCreacionUserViewModel = viewModel()
 
 
+        }
+        composable("pagina4"){
+            Buscador(navController)
         }
         // insertar más páginas a futuro, todas en "ui.theme/pages", siguiendo la lógica de las anteriores
     }

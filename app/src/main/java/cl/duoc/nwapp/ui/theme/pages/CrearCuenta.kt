@@ -89,7 +89,7 @@ fun FormularioCrearCuenta(
                 title = { Text("Confirmación") },
                 text = { Text("Usted puede ingresar a la aplicación") },
                 confirmButton = {
-                    Button(onClick = { abrirModal = false }) { Text("OK") }
+                    Button(onClick = { abrirModal = false; navController.navigate("pagina4") }) { Text("OK") }
                 },
             )
         }
