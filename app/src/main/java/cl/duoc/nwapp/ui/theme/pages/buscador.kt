@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -33,42 +34,99 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
+import kotlinx.coroutines.launch
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Buscador(navController: NavController) {
-    val context = LocalContext.current
-    val factory = BuscadorViewModelFactory(context.applicationContext)
-    val viewModel: BuscadorViewModel = viewModel(factory = factory)
-    val focusManager = LocalFocusManager.current
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
-    var hasLocationPermission by remember {
-        mutableStateOf(ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-    }
-
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted -> hasLocationPermission = isGranted }
-    )
-
-    LaunchedEffect(key1 = true) {
-        if (!hasLocationPermission) {
-            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+                NavigationDrawerItem(
+                    label = { Text("Mapa") },
+                    selected = false,
+                    onClick = {
+                        scope.launch { drawerState.close() }
+                    }
+                )
+                NavigationDrawerItem(
+                    label = { Text("Historial de busqueda") },
+                    selected = false,
+                    onClick = {
+                        navController.navigate("historial")
+                        scope.launch { drawerState.close() }
+                    }
+                )
+                NavigationDrawerItem(
+                    label = { Text("Registro de ubicacion") },
+                    selected = false,
+                    onClick = {
+                        navController.navigate("registro")
+                        scope.launch { drawerState.close() }
+                    }
+                )
+            }
         }
-    }
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("Buscador") },
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            scope.launch {
+                                drawerState.open()
+                            }
+                        }) {
+                            Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                        }
+                    }
+                )
+            }
+        ) { paddingValues ->
+            val context = LocalContext.current
+            val factory = BuscadorViewModelFactory(context.applicationContext)
+            val viewModel: BuscadorViewModel = viewModel(factory = factory)
+            val focusManager = LocalFocusManager.current
 
-    if (hasLocationPermission) {
-        MapScreen(viewModel = viewModel) {
-            focusManager.clearFocus() // Oculta el teclado
-        }
-    } else {
-        PermissionRequestScreen {
-            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            var hasLocationPermission by remember {
+                mutableStateOf(ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            }
+
+            val permissionLauncher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.RequestPermission(),
+                onResult = { isGranted -> hasLocationPermission = isGranted }
+            )
+
+            LaunchedEffect(key1 = true) {
+                if (!hasLocationPermission) {
+                    permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                }
+            }
+
+            Box(modifier = Modifier.padding(paddingValues)) {
+                if (hasLocationPermission) {
+                    MapScreen(viewModel = viewModel, navController = navController) {
+                        focusManager.clearFocus() // Oculta el teclado
+                    }
+                } else {
+                    PermissionRequestScreen {
+                        permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
-fun MapScreen(viewModel: BuscadorViewModel, onMapClick: () -> Unit) {
+fun MapScreen(viewModel: BuscadorViewModel, navController: NavController, onMapClick: () -> Unit) {
     val location = viewModel.lastKnownLocation
     val cameraPositionState = rememberCameraPositionState()
     var searchedLocationMarkerState by remember { mutableStateOf<LatLng?>(null) }
@@ -112,7 +170,7 @@ fun MapScreen(viewModel: BuscadorViewModel, onMapClick: () -> Unit) {
         }
 
         // UI de búsqueda superpuesta
-        SearchUI(viewModel = viewModel, onSearchResultClick = {
+        SearchUI(viewModel = viewModel, navController = navController, onSearchResultClick = {
             val newPos = LatLng(it.latitude, it.longitude)
             cameraPositionState.position = CameraPosition.fromLatLngZoom(newPos, 15f)
             searchedLocationMarkerState = newPos
@@ -122,7 +180,7 @@ fun MapScreen(viewModel: BuscadorViewModel, onMapClick: () -> Unit) {
 }
 
 @Composable
-fun SearchUI(viewModel: BuscadorViewModel, onSearchResultClick: (Address) -> Unit) {
+fun SearchUI(viewModel: BuscadorViewModel, navController: NavController, onSearchResultClick: (Address) -> Unit) {
     val focusManager = LocalFocusManager.current
 
     Column(modifier = Modifier.padding(16.dp)) {
@@ -154,16 +212,25 @@ fun SearchUI(viewModel: BuscadorViewModel, onSearchResultClick: (Address) -> Uni
                     .background(MaterialTheme.colorScheme.surface, shape = MaterialTheme.shapes.medium)
             ) {
                 items(viewModel.searchResults) { address ->
-                    Text(
-                        text = address.getAddressLine(0) ?: "Lugar sin nombre",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { 
-                                onSearchResultClick(address)
-                                viewModel.clearSearchResults()
-                             }
-                            .padding(16.dp)
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = address.getAddressLine(0) ?: "Lugar sin nombre",
+                            modifier = Modifier.weight(1f).clickable { onSearchResultClick(address) }
+                        )
+                        Button(onClick = { 
+                            val lat = address.latitude
+                            val lon = address.longitude
+                            val name = URLEncoder.encode(address.getAddressLine(0) ?: "Lugar sin nombre", StandardCharsets.UTF_8.name())
+                            navController.navigate("registro?lat=$lat&lon=$lon&nombre=$name")
+                            viewModel.clearSearchResults()
+                        }) {
+                            Text("Registrar")
+                        }
+                    }
                     Divider()
                 }
             }

@@ -1,59 +1,50 @@
 package cl.duoc.nwapp.ui.theme
 
-
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import cl.duoc.nwapp.ui.theme.pages.*
-import cl.duoc.nwapp.viewmodel.FormularioViewModel
 import cl.duoc.nwapp.viewmodel.FormularioCreacionUserViewModel
-
+import cl.duoc.nwapp.viewmodel.FormularioViewModel
+import cl.duoc.nwapp.viewmodel.HistorialViewModel
 
 @Composable
 fun Navegacion() {
     val navController = rememberNavController()
+    val historialViewModel: HistorialViewModel = viewModel()
+
     NavHost(navController, startDestination = "pagina1") {
         composable("pagina1") { PrimeraPantalla(navController) }
         composable("pagina2") {
             val viewModel: FormularioViewModel = viewModel()
             FormularioCrearCuenta(viewModel, navController)
         }
-        composable("pagina3"){
+        composable("pagina3") {
             val viewModel: FormularioCreacionUserViewModel = viewModel()
-
-
         }
-        composable("pagina4"){
+        composable("pagina4") {
             Buscador(navController)
         }
-        // insertar más páginas a futuro, todas en "ui.theme/pages", siguiendo la lógica de las anteriores
-    }
-}
-
-@Composable
-fun Pagina2(navController: NavController) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Bienvenido a la página 2")
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { navController.navigate("pagina1") }) {
-            Text("Ir a la primera página")
+        composable(
+            route = "registro?lat={lat}&lon={lon}&nombre={nombre}",
+            arguments = listOf(
+                navArgument("lat") { type = NavType.FloatType; defaultValue = 0f },
+                navArgument("lon") { type = NavType.FloatType; defaultValue = 0f },
+                navArgument("nombre") { type = NavType.StringType; defaultValue = "" }
+            )
+        ) {
+            val lat = it.arguments?.getFloat("lat")?.toString() ?: ""
+            val lon = it.arguments?.getFloat("lon")?.toString() ?: ""
+            val nombre = it.arguments?.getString("nombre") ?: ""
+            RegistroUbicacionScreen(navController, historialViewModel, nombre, lat, lon)
         }
+        composable("historial") {
+            HistorialScreen(navController, historialViewModel)
+        }
+        // insertar más páginas a futuro, todas en "ui.theme/pages", siguiendo la lógica de las anteriores
     }
 }
