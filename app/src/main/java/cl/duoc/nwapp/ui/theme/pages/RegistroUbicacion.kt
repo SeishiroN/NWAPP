@@ -1,3 +1,4 @@
+// Archivo: ui/theme/pages/RegistroUbicacion.kt
 package cl.duoc.nwapp.ui.theme.pages
 
 import android.widget.Toast
@@ -92,7 +93,7 @@ fun RegistroUbicacionScreen(
                 )
                 NavigationDrawerItem(
                     label = { Text("Registro de ubicacion") },
-                    selected = true, // Current screen
+                    selected = true, // Marcamos esta pantalla como la actual.
                     onClick = {
                         scope.launch { drawerState.close() }
                     }

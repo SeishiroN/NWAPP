@@ -10,36 +10,50 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import java.util.concurrent.TimeUnit
 
+/**
+ * Clase de utilidad para gestionar el acceso a la ubicación del dispositivo.
+ * Encapsula la complejidad de la API de ubicación de Google Play Services.
+ *
+ * @param context El contexto de la aplicación.
+ */
 class LocationManager(private val context: Context) {
 
-    // FusedLocationProviderClient es la API principal para interactuar con el proveedor de ubicación.
-    private val fusedLocationClient: com.google.android.gms.location.FusedLocationProviderClient =
-        com.google.android.gms.location.LocationServices.getFusedLocationProviderClient(context)
+    // `FusedLocationProviderClient` es la API principal para interactuar con el proveedor de ubicación.
+    // Combina señales de GPS, Wi-Fi y redes móviles para obtener la mejor ubicación posible.
+    private val fusedLocationClient: FusedLocationProviderClient =
+        LocationServices.getFusedLocationProviderClient(context)
 
-    // callbackFlow nos permite convertir una API basada en callbacks (como la de ubicación) en un Flow de Kotlin.
-    @SuppressLint("MissingPermission") // La advertencia se maneja con la verificación de permisos en la UI.
-    fun locationFlow(): Flow<com.google.android.gms.location.LocationResult> {
+    /**
+     * Crea un Flow de Kotlin que emite actualizaciones de la ubicación.
+     * `callbackFlow` es un constructor de flujos diseñado específicamente para adaptar APIs
+     * basadas en callbacks (como la de ubicación) al mundo de las corrutinas y los flujos.
+     */
+    @SuppressLint("MissingPermission") // La verificación de permisos se realiza en la UI antes de llamar a esta función.
+    fun locationFlow(): Flow<LocationResult> {
         return callbackFlow {
-            // 1. Configurar la solicitud de ubicación
-            val locationRequest = com.google.android.gms.location.LocationRequest.Builder(com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY, TimeUnit.SECONDS.toMillis(5))
+            // 1. Configurar la solicitud de ubicación.
+            val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, TimeUnit.SECONDS.toMillis(5))
                 .build()
 
-            // 2. Crear el Callback que recibirá las actualizaciones
-            val locationCallback = object : com.google.android.gms.location.LocationCallback() {
-                override fun onLocationResult(locationResult: com.google.android.gms.location.LocationResult) {
-                    // Cuando se recibe una nueva ubicación, se emite al Flow.
+            // 2. Crear el Callback que recibirá las actualizaciones de ubicación.
+            val locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    // Cuando se recibe una nueva ubicación desde el sistema...
+                    // `trySend` la emite al flujo. Es seguro llamarlo desde cualquier hilo.
                     trySend(locationResult)
                 }
             }
 
-            // 3. Empezar a solicitar actualizaciones de ubicación
+            // 3. Empezar a solicitar actualizaciones de ubicación al FusedLocationProviderClient.
             fusedLocationClient.requestLocationUpdates(
-                locationRequest,
-                locationCallback,
-                Looper.getMainLooper() // Usamos el Looper principal
+                locationRequest, // La configuración de la solicitud.
+                locationCallback, // El callback que procesará los resultados.
+                Looper.getMainLooper() // El hilo en el que se ejecutarán los callbacks.
             )
 
-            // 4. Cuando el Flow se cancela, dejamos de escuchar para ahorrar batería.
+            // 4. `awaitClose` es un bloque que se ejecuta cuando el flujo es cancelado
+            // por el consumidor (por ejemplo, cuando el ViewModel se destruye). Es crucial para
+            // limpiar recursos y detener las actualizaciones de ubicación para ahorrar batería.
             awaitClose {
                 fusedLocationClient.removeLocationUpdates(locationCallback)
             }

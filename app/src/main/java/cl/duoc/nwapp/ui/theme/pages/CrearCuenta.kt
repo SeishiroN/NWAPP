@@ -1,3 +1,4 @@
+// Archivo: ui/theme/pages/CrearCuenta.kt
 package cl.duoc.nwapp.ui.theme.pages
 
 import androidx.compose.foundation.Image
@@ -24,32 +25,41 @@ import androidx.navigation.NavController
 import cl.duoc.nwapp.R
 import cl.duoc.nwapp.viewmodel.FormularioViewModel
 
+/**
+ * Composable que define la pantalla del formulario de creación de cuenta.
+ *
+ * @param viewModel La instancia del ViewModel que gestiona el estado y la lógica de este formulario.
+ * @param navController El controlador de navegación para moverse a otras pantallas.
+ */
 @Composable
 fun FormularioCrearCuenta(
     viewModel: FormularioViewModel,
     navController: NavController,
 ) {
+    // `abrirModal` es un estado local que controla la visibilidad del diálogo de confirmación.
+    // `remember` se usa para que el estado (true/false) sobreviva a las recomposiciones.
     var abrirModal by remember { mutableStateOf(false) }
 
+    // `Column` es un Composable que organiza a sus hijos en una secuencia vertical.
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize(), // Ocupa todo el espacio disponible.
+        verticalArrangement = Arrangement.Center, // Centra a sus hijos verticalmente.
+        horizontalAlignment = Alignment.CenterHorizontally, // Centra a sus hijos horizontalmente.
     ) {
+        // Muestra el logo de la aplicación.
         Image(
-            painter = painterResource(id = R.drawable.nwa),
-            contentDescription = "NWA",
-            modifier =
-                Modifier
-                    .width(250.dp)
-                    .height(175.dp),
+            painter = painterResource(id = R.drawable.nwa), // Carga la imagen desde los recursos.
+            contentDescription = "Logo de la app",
+            modifier = Modifier.width(250.dp).height(175.dp) // Define un tamaño fijo.
         )
 
+        // `OutlinedTextField` es un campo de texto con un borde.
         OutlinedTextField(
-            value = viewModel.formulario.nombre,
-            onValueChange = { viewModel.formulario.nombre = it },
-            label = { Text("Ingresa nombre") },
-            isError = !viewModel.verificarNombre(),
+            value = viewModel.formulario.nombre, // El valor del campo se enlaza al estado en el ViewModel.
+            onValueChange = { viewModel.formulario.nombre = it }, // Cuando el usuario escribe, se actualiza el ViewModel.
+            label = { Text("Ingresa nombre") }, // Etiqueta que se muestra sobre el campo.
+            isError = !viewModel.verificarNombre(), // El campo se marca como error si la validación falla.
+            // `supportingText` muestra un texto de ayuda o de error debajo del campo.
             supportingText = { Text(viewModel.mensajesError.nombre, color = androidx.compose.ui.graphics.Color.Red) },
         )
         OutlinedTextField(
@@ -66,15 +76,20 @@ fun FormularioCrearCuenta(
             isError = !viewModel.verificarEdad(),
             supportingText = { Text(viewModel.mensajesError.edad, color = androidx.compose.ui.graphics.Color.Red) },
         )
+        
+        // `Checkbox` para aceptar los términos y condiciones.
         Checkbox(
-            checked = viewModel.formulario.terminos,
-            onCheckedChange = { viewModel.formulario.terminos = it },
+            checked = viewModel.formulario.terminos, // El estado (marcado/desmarcado) se enlaza al ViewModel.
+            onCheckedChange = { viewModel.formulario.terminos = it }, // Actualiza el ViewModel al hacer clic.
         )
         Text("Acepta los términos")
 
+        // Botón para enviar el formulario.
         Button(
+            // El botón solo está habilitado (`enabled`) si el formulario completo es válido.
             enabled = viewModel.verificarFormulario(),
             onClick = {
+                // Al hacer clic, si el formulario es válido, se muestra el diálogo de confirmación.
                 if (viewModel.verificarFormulario()) {
                     abrirModal = true
                 }
@@ -83,20 +98,20 @@ fun FormularioCrearCuenta(
             Text("Ingresar")
         }
 
+        // Este bloque `if` muestra el diálogo solo si `abrirModal` es `true`.
         if (abrirModal) {
             AlertDialog(
-                onDismissRequest = { },
+                onDismissRequest = { }, // No se puede cerrar tocando fuera.
                 title = { Text("Confirmación") },
                 text = { Text("Usted puede ingresar a la aplicación") },
                 confirmButton = {
-                    Button(onClick = { abrirModal = false; navController.navigate("pagina4") }) { Text("OK") }
+                    // Botón "OK" del diálogo.
+                    Button(onClick = { 
+                        abrirModal = false // Cierra el diálogo.
+                        navController.navigate("pagina4") // Navega a la pantalla del mapa.
+                    }) { Text("OK") }
                 },
             )
-        }
-        Button(
-            onClick = {navController.navigate("pagina3")},
-        ) {
-            Text("Registrar")
         }
     }
 }

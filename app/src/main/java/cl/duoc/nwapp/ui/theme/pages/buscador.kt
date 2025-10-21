@@ -50,7 +50,7 @@ fun Buscador(navController: NavController) {
             ModalDrawerSheet {
                 NavigationDrawerItem(
                     label = { Text("Mapa") },
-                    selected = false,
+                    selected = true, // Marcamos esta pantalla como la actual.
                     onClick = {
                         scope.launch { drawerState.close() }
                     }
@@ -113,7 +113,7 @@ fun Buscador(navController: NavController) {
             Box(modifier = Modifier.padding(paddingValues)) {
                 if (hasLocationPermission) {
                     MapScreen(viewModel = viewModel, navController = navController) {
-                        focusManager.clearFocus() // Oculta el teclado
+                        focusManager.clearFocus()
                     }
                 } else {
                     PermissionRequestScreen {
@@ -145,13 +145,11 @@ fun MapScreen(viewModel: BuscadorViewModel, navController: NavController, onMapC
                 cameraPositionState = cameraPositionState,
                 onMapClick = { onMapClick() }
             ) {
-                // Marcador de ubicación actual (azul)
                 Marker(
                     state = MarkerState(position = LatLng(location.latitude, location.longitude)),
                     title = "Mi Ubicación",
                     icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
                 )
-                // Marcador de ubicación buscada (rojo)
                 searchedLocationMarkerState?.let {
                     Marker(
                         state = MarkerState(position = it),
@@ -160,16 +158,11 @@ fun MapScreen(viewModel: BuscadorViewModel, navController: NavController, onMapC
                 }
             }
         } else {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
+            Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                 Text("Obteniendo ubicación para mostrar el mapa...")
             }
         }
 
-        // UI de búsqueda superpuesta
         SearchUI(viewModel = viewModel, navController = navController, onSearchResultClick = {
             val newPos = LatLng(it.latitude, it.longitude)
             cameraPositionState.position = CameraPosition.fromLatLngZoom(newPos, 15f)
@@ -189,7 +182,15 @@ fun SearchUI(viewModel: BuscadorViewModel, navController: NavController, onSearc
             onValueChange = { viewModel.onSearchQueryChange(it) },
             label = { Text("Buscar lugar...") },
             modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface, shape = MaterialTheme.shapes.medium),
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+            // El ícono de la izquierda ahora es un botón.
+            leadingIcon = { 
+                IconButton(onClick = { 
+                    viewModel.executeSearch()
+                    focusManager.clearFocus() // Ocultamos el teclado después de buscar.
+                }) {
+                    Icon(Icons.Default.Search, contentDescription = "Buscar")
+                }
+            },
             trailingIcon = {
                 if (viewModel.searchQuery.isNotEmpty()) {
                     IconButton(onClick = { viewModel.onSearchQueryChange("") }) {
@@ -206,10 +207,7 @@ fun SearchUI(viewModel: BuscadorViewModel, navController: NavController, onSearc
 
         if (viewModel.searchResults.isNotEmpty()) {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-                    .background(MaterialTheme.colorScheme.surface, shape = MaterialTheme.shapes.medium)
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp).background(MaterialTheme.colorScheme.surface, shape = MaterialTheme.shapes.medium)
             ) {
                 items(viewModel.searchResults) { address ->
                     Row(
@@ -237,7 +235,6 @@ fun SearchUI(viewModel: BuscadorViewModel, navController: NavController, onSearc
         }
     }
 }
-
 
 @Composable
 fun PermissionRequestScreen(onRequest: () -> Unit) {
