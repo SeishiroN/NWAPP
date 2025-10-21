@@ -2,6 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- los permisos en un archivo xml se hacen con las flechas -->
+    <!-- Permiso para Internet (Geocoder y maps lo necesitan) -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Permisos necesarios para encontrar ubicación del dispositivo-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,6 +18,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NWAPP">
+        <!-- Inserción de metadata para poder ocupar el API KEY y ocupar MAPS -->
+        <meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="TU_API_KEY_AQUÍ" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -1,13 +1,17 @@
 package cl.duoc.nwapp.model
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 
+// Este archivo es para contener la estructura de como estaran conformados los errores
+// del formulario, cada ítem tendrá un error específico para diferenciarlo del resto
 
 class MensajesError {
+
     var nombre: String = ""
+
+
     var correo: String = ""
+
+
     var edad: String = ""
-    var terminos: String = ""
+
 }
