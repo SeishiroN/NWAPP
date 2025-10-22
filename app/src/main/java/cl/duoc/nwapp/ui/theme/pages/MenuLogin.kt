@@ -15,11 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import cl.duoc.nwapp.R
 
-/**
- * Composable para la primera pantalla de la aplicación (pantalla de bienvenida).
- *
- * @param navController El controlador de navegación para moverse a otras pantallas.
- */
+
 @Composable
 fun PrimeraPantalla(navController: NavController) {
     // `Column` organiza los elementos verticalmente y los centra en la pantalla.

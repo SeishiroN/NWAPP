@@ -101,7 +101,9 @@ fun FormularioCrearCuenta(
 
                     Button(onClick = { 
                         abrirModal = false
-                        navController.navigate("pagina4") //al apretar ok se va a la siguiente pantalla
+                        navController.navigate("main_screen") { 
+                            popUpTo("pagina1")
+                        }
                     }) { Text("OK") }
                 },
             )
