@@ -1,13 +1,15 @@
+
 package cl.duoc.nwapp.model
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DatosDao {
-    @Query("SELECT * FROM datos LIMIT 3")
-    suspend fun getAll(): List<Datos>
+    @Query("SELECT * FROM datos ORDER BY id DESC")
+    fun getAll(): Flow<List<Datos>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(datos: Datos)
 
     @Update

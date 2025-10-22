@@ -1,17 +1,23 @@
+
 package cl.duoc.nwapp.repository
 
 import cl.duoc.nwapp.model.Datos
 import cl.duoc.nwapp.model.DatosDao
+import kotlinx.coroutines.flow.Flow
 
-// tremendo pendejo mi compañero, se equivoco al copiar (y es negro)
-class DatosRepository(
-    private val dao: DatosDao,
-) {
-    suspend fun getAll() = dao.getAll()
+class DatosRepository(private val dao: DatosDao) {
 
-    suspend fun insert(datos: Datos) = dao.insert(datos)
+    fun getAll(): Flow<List<Datos>> = dao.getAll()
 
-    suspend fun update(datos: Datos) = dao.update(datos)
+    suspend fun insert(datos: Datos) {
+        dao.insert(datos)
+    }
 
-    suspend fun delete(datos: Datos) = dao.delete(datos)
+    suspend fun update(datos: Datos) {
+        dao.update(datos)
+    }
+
+    suspend fun delete(datos: Datos) {
+        dao.delete(datos)
+    }
 }

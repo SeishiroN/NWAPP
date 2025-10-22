@@ -24,13 +24,11 @@ import androidx.navigation.NavController
 import cl.duoc.nwapp.R
 import cl.duoc.nwapp.viewmodel.FormularioViewModel
 
-
 @Composable
 fun FormularioCrearCuenta(
     viewModel: FormularioViewModel,
     navController: NavController,
 ) {
-
     var abrirModal by remember { mutableStateOf(false) }
     // column para organizar elementos hacia abajo
     Column(
@@ -38,11 +36,10 @@ fun FormularioCrearCuenta(
         verticalArrangement = Arrangement.Center, // Centrar verticalmente.
         horizontalAlignment = Alignment.CenterHorizontally, // Centrar horizontalmente.
     ) {
-
         Image(
             painter = painterResource(id = R.drawable.nwa), // para mostrar logo
             contentDescription = "Logo de la app",
-            modifier = Modifier.width(250.dp).height(175.dp) // tamaño del logo
+            modifier = Modifier.width(250.dp).height(175.dp), // tamaño del logo
         )
 
         // `OutlinedTextField` caja para ingresar datos
@@ -56,7 +53,7 @@ fun FormularioCrearCuenta(
         )
         OutlinedTextField(
             value = viewModel.formulario.correo, // capta el valor del correo
-            onValueChange = { viewModel.formulario.correo = it },// actualiza el valor del correo
+            onValueChange = { viewModel.formulario.correo = it }, // actualiza el valor del correo
             label = { Text("Ingresa correo") }, // Placeholder
             isError = !viewModel.verificarCorreo(), // si no va de acuerdo a lo solicitado lanza error
             // `supportingText` ayuda visual en rojo para errores
@@ -69,7 +66,6 @@ fun FormularioCrearCuenta(
             isError = !viewModel.verificarEdad(),
             supportingText = { Text(viewModel.mensajesError.edad, color = androidx.compose.ui.graphics.Color.Red) },
         )
-        
 
         Checkbox(
             checked = viewModel.formulario.terminos, // registro si marca o no
@@ -77,12 +73,11 @@ fun FormularioCrearCuenta(
         )
         Text("Acepta los términos")
 
-
         Button(
             // enabled si cumple con los requisitos de verificar formulario
             enabled = viewModel.verificarFormulario(),
             onClick = {
-                //si hace click lanza el modal
+                // si hace click lanza el modal
                 if (viewModel.verificarFormulario()) {
                     abrirModal = true
                 }
@@ -91,17 +86,16 @@ fun FormularioCrearCuenta(
             Text("Ingresar")
         }
 
-        //si modal se abre
+        // si modal se abre
         if (abrirModal) {
             AlertDialog(
                 onDismissRequest = { },
                 title = { Text("Confirmación") },
                 text = { Text("Usted puede ingresar a la aplicación") },
                 confirmButton = {
-
-                    Button(onClick = { 
+                    Button(onClick = {
                         abrirModal = false
-                        navController.navigate("main_screen") { 
+                        navController.navigate("pagina3") {
                             popUpTo("pagina1")
                         }
                     }) { Text("OK") }

@@ -31,9 +31,10 @@ fun MainScreen(navController: NavController) { // <- Recibe el NavController
     var searchQuery by remember { mutableStateOf("") }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp),
     ) {
         // Barra de búsqueda
         OutlinedTextField(
@@ -43,10 +44,10 @@ fun MainScreen(navController: NavController) { // <- Recibe el NavController
             leadingIcon = {
                 Icon(
                     imageVector = Icons.Default.Search,
-                    contentDescription = "Icono de búsqueda"
+                    contentDescription = "Icono de búsqueda",
                 )
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -54,9 +55,9 @@ fun MainScreen(navController: NavController) { // <- Recibe el NavController
         // Botones
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround
+            horizontalArrangement = Arrangement.SpaceAround,
         ) {
-            Button(onClick = { navController.navigate("datos_screen") }) {
+            Button(onClick = { navController.navigate("pagina4") }) {
                 Text("Registrar Ubicación")
             }
 

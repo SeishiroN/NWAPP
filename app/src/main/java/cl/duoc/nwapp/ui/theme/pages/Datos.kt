@@ -10,15 +10,18 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import cl.duoc.nwapp.R
 import cl.duoc.nwapp.model.Datos
 import cl.duoc.nwapp.viewmodel.DatosViewModel
 
 @Composable
-fun Datos(viewModel: DatosViewModel) {
+fun CrearDatos(
+    viewModel: DatosViewModel,
+    navController: NavController,
+) {
     val datos by viewModel.datos.collectAsState()
     val nombre by viewModel.nombre.collectAsState()
     val latitud by viewModel.latitud.collectAsState()
@@ -88,6 +91,9 @@ fun Datos(viewModel: DatosViewModel) {
                 }
                 Divider()
             }
+        }
+        Button(onClick = { navController.popBackStack() }) {
+            Text("Go Back")
         }
     }
 }
