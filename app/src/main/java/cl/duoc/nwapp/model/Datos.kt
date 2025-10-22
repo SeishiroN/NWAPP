@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 data class Datos(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val nombre: String,
-    val latiud: String,
-    val longitud: String
+    val latitud: String,
+    val longitud: String,
 )
