@@ -23,11 +23,7 @@ class LocationManager(private val context: Context) {
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
 
-    /**
-     * Crea un Flow de Kotlin que emite actualizaciones de la ubicación.
-     * `callbackFlow` es un constructor de flujos diseñado específicamente para adaptar APIs
-     * basadas en callbacks (como la de ubicación) al mundo de las corrutinas y los flujos.
-     */
+
     @SuppressLint("MissingPermission") // La verificación de permisos se realiza en la UI antes de llamar a esta función.
     fun locationFlow(): Flow<LocationResult> {
         return callbackFlow {

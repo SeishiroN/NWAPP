@@ -1,4 +1,3 @@
-// Archivo: ui/theme/pages/CrearCuenta.kt
 package cl.duoc.nwapp.ui.theme.pages
 
 import androidx.compose.foundation.Image
@@ -25,48 +24,42 @@ import androidx.navigation.NavController
 import cl.duoc.nwapp.R
 import cl.duoc.nwapp.viewmodel.FormularioViewModel
 
-/**
- * Composable que define la pantalla del formulario de creación de cuenta.
- *
- * @param viewModel La instancia del ViewModel que gestiona el estado y la lógica de este formulario.
- * @param navController El controlador de navegación para moverse a otras pantallas.
- */
+
 @Composable
 fun FormularioCrearCuenta(
     viewModel: FormularioViewModel,
     navController: NavController,
 ) {
-    // `abrirModal` es un estado local que controla la visibilidad del diálogo de confirmación.
-    // `remember` se usa para que el estado (true/false) sobreviva a las recomposiciones.
-    var abrirModal by remember { mutableStateOf(false) }
 
-    // `Column` es un Composable que organiza a sus hijos en una secuencia vertical.
+    var abrirModal by remember { mutableStateOf(false) }
+    // column para organizar elementos hacia abajo
     Column(
         modifier = Modifier.fillMaxSize(), // Ocupa todo el espacio disponible.
-        verticalArrangement = Arrangement.Center, // Centra a sus hijos verticalmente.
-        horizontalAlignment = Alignment.CenterHorizontally, // Centra a sus hijos horizontalmente.
+        verticalArrangement = Arrangement.Center, // Centrar verticalmente.
+        horizontalAlignment = Alignment.CenterHorizontally, // Centrar horizontalmente.
     ) {
-        // Muestra el logo de la aplicación.
+
         Image(
-            painter = painterResource(id = R.drawable.nwa), // Carga la imagen desde los recursos.
+            painter = painterResource(id = R.drawable.nwa), // para mostrar logo
             contentDescription = "Logo de la app",
-            modifier = Modifier.width(250.dp).height(175.dp) // Define un tamaño fijo.
+            modifier = Modifier.width(250.dp).height(175.dp) // tamaño del logo
         )
 
-        // `OutlinedTextField` es un campo de texto con un borde.
+        // `OutlinedTextField` caja para ingresar datos
         OutlinedTextField(
-            value = viewModel.formulario.nombre, // El valor del campo se enlaza al estado en el ViewModel.
-            onValueChange = { viewModel.formulario.nombre = it }, // Cuando el usuario escribe, se actualiza el ViewModel.
-            label = { Text("Ingresa nombre") }, // Etiqueta que se muestra sobre el campo.
-            isError = !viewModel.verificarNombre(), // El campo se marca como error si la validación falla.
-            // `supportingText` muestra un texto de ayuda o de error debajo del campo.
+            value = viewModel.formulario.nombre, // capta el valor del nombre
+            onValueChange = { viewModel.formulario.nombre = it }, // actualiza el valor del nombre.
+            label = { Text("Ingresa nombre") }, // Placeholder
+            isError = !viewModel.verificarNombre(), // si no va de acuerdo a lo solicitado lanza error
+            // `supportingText` ayuda visual en rojo para errores
             supportingText = { Text(viewModel.mensajesError.nombre, color = androidx.compose.ui.graphics.Color.Red) },
         )
         OutlinedTextField(
-            value = viewModel.formulario.correo,
-            onValueChange = { viewModel.formulario.correo = it },
-            label = { Text("Ingresa correo") },
-            isError = !viewModel.verificarCorreo(),
+            value = viewModel.formulario.correo, // capta el valor del correo
+            onValueChange = { viewModel.formulario.correo = it },// actualiza el valor del correo
+            label = { Text("Ingresa correo") }, // Placeholder
+            isError = !viewModel.verificarCorreo(), // si no va de acuerdo a lo solicitado lanza error
+            // `supportingText` ayuda visual en rojo para errores
             supportingText = { Text(viewModel.mensajesError.correo, color = androidx.compose.ui.graphics.Color.Red) },
         )
         OutlinedTextField(
@@ -77,19 +70,19 @@ fun FormularioCrearCuenta(
             supportingText = { Text(viewModel.mensajesError.edad, color = androidx.compose.ui.graphics.Color.Red) },
         )
         
-        // `Checkbox` para aceptar los términos y condiciones.
+
         Checkbox(
-            checked = viewModel.formulario.terminos, // El estado (marcado/desmarcado) se enlaza al ViewModel.
-            onCheckedChange = { viewModel.formulario.terminos = it }, // Actualiza el ViewModel al hacer clic.
+            checked = viewModel.formulario.terminos, // registro si marca o no
+            onCheckedChange = { viewModel.formulario.terminos = it }, // actualiza si marca o no
         )
         Text("Acepta los términos")
 
-        // Botón para enviar el formulario.
+
         Button(
-            // El botón solo está habilitado (`enabled`) si el formulario completo es válido.
+            // enabled si cumple con los requisitos de verificar formulario
             enabled = viewModel.verificarFormulario(),
             onClick = {
-                // Al hacer clic, si el formulario es válido, se muestra el diálogo de confirmación.
+                //si hace click lanza el modal
                 if (viewModel.verificarFormulario()) {
                     abrirModal = true
                 }
@@ -98,17 +91,17 @@ fun FormularioCrearCuenta(
             Text("Ingresar")
         }
 
-        // Este bloque `if` muestra el diálogo solo si `abrirModal` es `true`.
+        //si modal se abre
         if (abrirModal) {
             AlertDialog(
-                onDismissRequest = { }, // No se puede cerrar tocando fuera.
+                onDismissRequest = { },
                 title = { Text("Confirmación") },
                 text = { Text("Usted puede ingresar a la aplicación") },
                 confirmButton = {
-                    // Botón "OK" del diálogo.
+
                     Button(onClick = { 
-                        abrirModal = false // Cierra el diálogo.
-                        navController.navigate("pagina4") // Navega a la pantalla del mapa.
+                        abrirModal = false
+                        navController.navigate("pagina4") //al apretar ok se va a la siguiente pantalla
                     }) { Text("OK") }
                 },
             )
