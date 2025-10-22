@@ -44,6 +44,7 @@ android {
 }
 
 val nav_version = "2.7.7" // Versión unificada para Navigation
+val coil_version = "2.6.0" // Versión para Coil (GIFs)
 
 dependencies {
 
@@ -76,6 +77,10 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
+
+    // --- Coil (GIF Loading) ---
+    implementation("io.coil-kt:coil-compose:$coil_version")
+    implementation("io.coil-kt:coil-gif:$coil_version")
 
     // --- Testing ---
     testImplementation(libs.junit)
