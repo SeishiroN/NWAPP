@@ -93,7 +93,7 @@ fun CrearDatos(
             }
         }
         Button(onClick = { navController.popBackStack() }) {
-            Text("Go Back")
+            Text("Regresar")
         }
     }
 }
