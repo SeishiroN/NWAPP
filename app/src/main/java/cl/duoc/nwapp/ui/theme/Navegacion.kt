@@ -22,15 +22,13 @@ fun Navegacion() {
     val navController = rememberNavController()
     val context = LocalContext.current
 
-    // 1. Usamos `remember` para crear una ÚNICA instancia de nuestras dependencias.
-    //    Esto es eficiente y evita que la base de datos se cree en cada recomposición.
+    // La instancia única de la base de datos y el repositorio.
     val database = remember {
         Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "app_database").build()
     }
     val repository = remember { DatosRepository(database.datosDao()) }
 
-    // 2. Creamos una "fábrica" directamente aquí.
-    //    Este objeto le dice a `viewModel()` cómo construir un `DatosViewModel`.
+    // La fábrica para nuestro DatosViewModel.
     val datosViewModelFactory = remember(repository) {
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -43,22 +41,23 @@ fun Navegacion() {
         }
     }
 
+    // Creamos una única instancia del ViewModel para compartirla entre pantallas.
+    val datosViewModel: DatosViewModel = viewModel(factory = datosViewModelFactory)
+
     NavHost(navController, startDestination = "pagina1") {
-        // Pantalla de bienvenida / login.
         composable("pagina1") { PrimeraPantalla(navController) }
 
-        // Pantalla del formulario de creación de cuenta.
         composable("pagina2") {
-            val viewModel: FormularioViewModel = viewModel()
-            FormularioCrearCuenta(viewModel, navController)
+            val formularioViewModel: FormularioViewModel = viewModel()
+            FormularioCrearCuenta(formularioViewModel, navController)
         }
-        composable("pagina3") { MainScreen(navController) }
 
-        // 3. Usamos la fábrica para crear el ViewModel.
-        //    Ahora la navegación a "pagina4" funcionará sin crashear.
+        // Le pasamos el mismo ViewModel a la MainScreen.
+        composable("pagina3") { MainScreen(navController, datosViewModel) }
+
+        // Y también a la pantalla de creación.
         composable("pagina4") {
-            val viewModel2: DatosViewModel = viewModel(factory = datosViewModelFactory)
-            CrearDatos(viewModel2, navController)
+            CrearDatos(datosViewModel, navController)
         }
     }
 }
