@@ -53,13 +53,29 @@ fun CrearDatos(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = {
-            viewModel.agregarDatos(Datos(nombre = nombre, latitud = latitud, longitud = longitud))
-            viewModel.nombre.value = ""
-            viewModel.latitud.value = ""
-            viewModel.longitud.value = ""
-        }) {
-            Text("Agregar Datos")
+        // Fila para los botones de acción
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround
+        ) {
+            Button(onClick = {
+                viewModel.agregarDatos(Datos(nombre = nombre, latitud = latitud, longitud = longitud))
+                viewModel.nombre.value = ""
+                viewModel.latitud.value = ""
+                viewModel.longitud.value = ""
+            }) {
+                Text("Agregar Datos")
+            }
+
+            Button(onClick = {
+                // La consulta DAO ordena los datos por ID descendente, por lo que el primero en la lista es el último agregado.
+                // Usamos firstOrNull para evitar errores si la lista está vacía.
+                datos.firstOrNull()?.let { ultimoDato ->
+                    viewModel.eliminarDatos(ultimoDato)
+                }
+            }) {
+                Text("Borrar último dato")
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))

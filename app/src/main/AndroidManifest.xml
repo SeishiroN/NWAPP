@@ -19,7 +19,7 @@
         android:theme="@style/Theme.NWAPP">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AQUÍ_PON_TU_API_KEY." />
+            android:value="" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

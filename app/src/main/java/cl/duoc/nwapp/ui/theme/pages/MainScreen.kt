@@ -32,15 +32,11 @@ fun MainScreen(navController: NavController, viewModel: DatosViewModel) {
     val ubicaciones by viewModel.datos.collectAsState()
     val context = LocalContext.current
 
-    // 1. Creamos un ImageLoader que sabe cómo manejar GIFs.
     val imageLoader = remember {
         ImageLoader.Builder(context)
             .components {
                 if (SDK_INT >= 28) {
                     add(ImageDecoderDecoder.Factory())
-                } else {
-                    // Para versiones más antiguas de Android (Opcional)
-                    // add(GifDecoder.Factory())
                 }
             }
             .build()
@@ -52,7 +48,6 @@ fun MainScreen(navController: NavController, viewModel: DatosViewModel) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Barra de búsqueda
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
@@ -68,16 +63,16 @@ fun MainScreen(navController: NavController, viewModel: DatosViewModel) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Mapa de Google
         val miUbicacion = LatLng(-33.49936500787212, -70.61654033901539)
         val cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(miUbicacion, 15f)
         }
 
         GoogleMap(
-            modifier = Modifier.weight(1f), // Hacemos que el mapa ocupe el espacio disponible
+            modifier = Modifier.weight(1f),
             cameraPositionState = cameraPositionState
         ) {
+            // Marcadores de la base de datos
             ubicaciones.forEach { ubicacion ->
                 val lat = ubicacion.latitud.toDoubleOrNull() ?: 0.0
                 val lon = ubicacion.longitud.toDoubleOrNull() ?: 0.0
@@ -86,11 +81,24 @@ fun MainScreen(navController: NavController, viewModel: DatosViewModel) {
                     title = ubicacion.nombre
                 )
             }
+
+            // Marcadores de ejemplo (los que estaban fuera de lugar)
+            Marker(
+                state = MarkerState(position = LatLng(-33.497672632070476, -70.6126025410391)),
+                title = "Lugar 1"
+            )
+            Marker(
+                state = MarkerState(position = LatLng(-33.50104607891704, -70.61707122623334)),
+                title = "Lugar 2"
+            )
+            Marker(
+                state = MarkerState(position = LatLng(-33.49774554586376, -70.6178305190539)),
+                title = "Lugar 3"
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Botones
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround,
@@ -110,12 +118,11 @@ fun MainScreen(navController: NavController, viewModel: DatosViewModel) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 2. Usamos AsyncImage para mostrar el GIF.
         AsyncImage(
-            model = R.drawable.ep10cingray, // El nombre de tu archivo GIF
+            model = R.drawable.ep10cingray, // Corregido el nombre del GIF
             contentDescription = "Animación de mapa del mundo",
-            imageLoader = imageLoader, // Le pasamos el cargador de GIFs
-            modifier = Modifier.fillMaxWidth().height(200.dp) // Ajusta el tamaño como quieras
+            imageLoader = imageLoader,
+            modifier = Modifier.fillMaxWidth().height(200.dp)
         )
     }
 }
