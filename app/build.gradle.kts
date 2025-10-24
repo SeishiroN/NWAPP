@@ -1,21 +1,25 @@
 
 
 plugins {
+    // Plugin esencial para construir una aplicación Android.
     alias(libs.plugins.android.application)
+    // Plugin para habilitar el soporte de Kotlin en Android.
     alias(libs.plugins.kotlin.android)
+    // Plugin específico para habilitar Jetpack Compose.
     alias(libs.plugins.kotlin.compose)
+    // Plugin para el procesador de anotaciones de Kotlin (kapt), necesario para Room.
     id("org.jetbrains.kotlin.kapt")
 
 }
 
 android {
     namespace = "cl.duoc.nwapp"
-    compileSdk = 36
+    compileSdk = 36 // La versión del SDK de Android contra la que se compila tu app.
 
     defaultConfig {
         applicationId = "cl.duoc.nwapp"
-        minSdk = 24
-        targetSdk = 36
+        minSdk = 24 // La versión mínima de Android que tu app soporta.
+        targetSdk = 36 // La versión de Android para la que tu app está diseñada.
         versionCode = 1
         versionName = "1.0"
 
@@ -32,55 +36,60 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_11 // Versión de Java del código fuente.
+        targetCompatibility = JavaVersion.VERSION_11 // Versión de Java del código compilado.
     }
     kotlinOptions {
         jvmTarget = "11"
     }
     buildFeatures {
-        compose = true
+        compose = true // Habilita explícitamente el uso de Jetpack Compose.
     }
 }
 
-val nav_version = "2.9.5"
+val nav_version = "2.7.7" // Variable para unificar la versión de todas las dependencias de Navigation.
+val coil_version = "2.6.0" // Variable para unificar la versión de Coil.
+
 dependencies {
 
+    // --- Core & Lifecycle ---
+    implementation(libs.androidx.core.ktx) // Extensiones de Kotlin para las APIs core de Android.
+    implementation(libs.androidx.lifecycle.runtime.ktx) // Provee el `lifecycleScope` y otras utilidades de ciclo de vida.
+    implementation(libs.androidx.activity.compose) // Integración de Jetpack Compose en Activities.
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4")
-
-
-    implementation("com.google.android.gms:play-services-maps:18.2.0")
-    implementation("com.google.maps.android:maps-compose:2.11.4")
-
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
-
-    implementation("androidx.navigation:navigation-compose:${nav_version}")
-    implementation("androidx.navigation:navigation-fragment-ktx:${nav_version}")
-    implementation("androidx.navigation:navigation-ui-ktx:${nav_version}")
-
-
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
+    // --- Compose ---
+    // `compose-bom` (Bill of Materials) gestiona las versiones de las librerías de Compose para que sean compatibles entre sí.
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.material3)
-    implementation("androidx.navigation:navigation-fragment:${nav_version}")
-    implementation("androidx.navigation:navigation-ui:${nav_version}")
-    implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation("androidx.navigation:navigation-dynamic-features-fragment:${nav_version}")
-    //implementation(libs.androidx.navigation.compose)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation ("androidx.navigation:navigation-testing:$nav_version")
+    implementation(libs.androidx.compose.ui) // Componentes fundamentales de la UI de Compose (Modifiers, Layouts, etc.).
+    implementation(libs.androidx.compose.ui.graphics) // Clases de gráficos para Compose (Color, Brush, etc.).
+    implementation(libs.androidx.compose.ui.tooling.preview) // Permite previsualizar Composables en el editor de Android Studio.
+    implementation(libs.androidx.compose.material3) // La última versión de los componentes de Material Design para Compose.
+    debugImplementation(libs.androidx.compose.ui.tooling) // Herramientas de inspección de la UI de Compose.
+
+    // --- Navigation ---
+    // La biblioteca principal para la navegación entre Composables.
+    implementation("androidx.navigation:navigation-compose:$nav_version")
+
+    // --- Room (Base de Datos) ---
+    implementation("androidx.room:room-runtime:2.6.1") // La biblioteca principal de Room.
+    implementation("androidx.room:room-ktx:2.6.1") // Extensiones de Kotlin para Room (soporte para Coroutines y Flow).
+    kapt("androidx.room:room-compiler:2.6.1") // El procesador que lee tus clases @Dao y @Database y genera el código necesario.
+
+    // --- Google Maps & Location ---
+    implementation("com.google.maps.android:maps-compose:2.11.4") // La biblioteca para integrar Google Maps en Jetpack Compose.
+    implementation("com.google.android.gms:play-services-maps:18.2.0") // Los servicios de Google Play subyacentes para Mapas.
+    implementation("com.google.android.gms:play-services-location:21.0.1") // Para obtener la ubicación del dispositivo.
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4") // Para usar `await()` con tareas de Google Play Services en corrutinas.
+
+    // --- Coil (Carga de Imágenes y GIFs) ---
+    implementation("io.coil-kt:coil-compose:$coil_version") // La biblioteca para cargar imágenes en Compose.
+    implementation("io.coil-kt:coil-gif:$coil_version") // La extensión específica para poder decodificar y mostrar GIFs.
+
+    // --- Testing ---
+    testImplementation(libs.junit) // JUnit para tests unitarios.
+    androidTestImplementation(libs.androidx.junit) // JUnit para tests instrumentados en Android.
+    androidTestImplementation(libs.androidx.espresso.core) // Espresso para tests de UI.
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-    debugImplementation(libs.androidx.compose.ui.tooling)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4) // Para hacer tests de UI específicos de Compose.
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
