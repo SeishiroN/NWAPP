@@ -12,92 +12,98 @@ import cl.duoc.nwapp.model.MensajesError
 /**
  * ViewModel para la pantalla del formulario de creación de cuenta.
  *
- * En la arquitectura MVVM, el ViewModel actúa como un intermediario entre el Repositorio (lógica de datos)
- * y la UI (la vista). Su responsabilidad es obtener y preparar los datos para la UI,
- * y reaccionar a las interacciones del usuario (por ejemplo, validando un formulario).
+ * En la arquitectura MVVM, el ViewModel actúa como un intermediario entre la capa de datos (Repositorio)
+ * y la capa de UI (la Vista). Su responsabilidad es:
+ * 1. Mantener el estado de la UI (los datos que se muestran en pantalla).
+ * 2. Exponer ese estado a la UI para que lo observe.
+ * 3. Contener la lógica de negocio y reaccionar a los eventos del usuario (clics, texto ingresado, etc.).
  *
- * Al usar un ViewModel, los datos de la UI (como el estado del formulario) sobreviven a cambios de
- * configuración, como la rotación de la pantalla.
+ * Al usar un ViewModel, el estado (como los datos del formulario) sobrevive a cambios de configuración,
+ * por ejemplo, si el usuario rota la pantalla, la información no se pierde.
  */
 class FormularioViewModel : ViewModel() {
-    // Se crea una instancia del Repositorio para acceder a la lógica de negocio y validación de datos.
+    // Se crea una instancia del Repositorio. En este caso, el repositorio contiene la lógica de validación.
     private val repository = FormularioRepository()
 
-    // 'formulario' contiene el estado actual de los campos del formulario (nombre, correo, etc.).
-    // Se utiliza `mutableStateOf` de Jetpack Compose para que la UI se redibuje automáticamente
-    // cada vez que el valor de 'formulario' cambia.
-    var formulario: FormularioModel by mutableStateOf( repository.getFormulario() )
+    // --- ESTADO DEL FORMULARIO ---
 
-    // 'mensajesError' almacena los mensajes de error de validación para cada campo.
-    // Al igual que 'formulario', es un estado mutable para que la UI reaccione a los cambios.
-    var mensajesError: MensajesError by mutableStateOf( repository.getMensajesError() )
+    // `formulario` contiene el estado actual de todos los campos (nombre, correo, etc.).
+    // Se inicializa con los valores por defecto que provee el repositorio.
+    // `by mutableStateOf` es un delegado de propiedad de Compose. Esto significa que:
+    //  - `formulario` es un estado observable.
+    //  - Cada vez que una propiedad de `formulario` cambia (ej: `formulario.nombre = "nuevo"`),
+    //    Compose lo detecta y recompone automáticamente las partes de la UI que dependen de él.
+    var formulario: FormularioModel by mutableStateOf(repository.getFormulario())
+
+    // `mensajesError` almacena los textos de error para cada campo.
+    // También es un estado observable para que la UI pueda mostrar u ocultar los errores en tiempo real.
+    var mensajesError: MensajesError by mutableStateOf(repository.getMensajesError())
 
     /**
-     * Verifica que todos los campos del formulario sean válidos ejecutando todas las
-     * funciones de verificación individuales.
-     * Retorna `true` solo si todas las validaciones son exitosas.
+     * Función maestra de validación. Comprueba todos los campos del formulario a la vez.
+     * La UI usa esta función para, por ejemplo, habilitar o deshabilitar el botón de "Ingresar".
+     * @return `true` solo si TODAS las funciones de verificación individuales devuelven `true`.
      */
     fun verificarFormulario(): Boolean {
         return verificarNombre() &&
-                verificarCorreo() &&
-                verificarEdad() &&
-                verificarTerminos()
+            verificarCorreo() &&
+            verificarEdad() &&
+            verificarTerminos()
     }
 
     /**
-     * Valida el campo 'nombre' a través del repositorio.
-     * Si no es válido, asigna un mensaje de error y retorna `false`.
-     * Si es válido, limpia el mensaje de error y retorna `true`.
+     * Valida el campo 'nombre' llamando a la lógica del repositorio.
+     * Si la validación falla, actualiza el estado `mensajesError.nombre` con un texto.
+     * Si la validación es exitosa, limpia el mensaje de error.
+     * @return `true` si el nombre es válido, `false` en caso contrario.
      */
     fun verificarNombre(): Boolean {
-        if (!repository.validacionNombre()) {
+        // La lógica real (ej: `formulario.nombre == "admin"`) está en el repositorio.
+        return if (!repository.validacionNombre()) {
             mensajesError.nombre = "El nombre debe ser el de un usuario registrado"
-            return false
+            false
         } else {
             mensajesError.nombre = ""
-            return true
+            true
         }
     }
 
     /**
-     * Valida el campo 'correo' a través del repositorio.
-     * Actualiza el mensaje de error correspondiente y retorna el resultado de la validación.
+     * Valida el campo 'correo'.
      */
     fun verificarCorreo(): Boolean {
-        if(!repository.validacionCorreo()) {
+        return if (!repository.validacionCorreo()) {
             mensajesError.correo = "El correo no es válido"
-            return false
+            false
         } else {
             mensajesError.correo = ""
-            return true
+            true
         }
     }
 
     /**
-     * Valida el campo 'edad' a través del repositorio.
-     * Actualiza el mensaje de error correspondiente y retorna el resultado de la validación.
+     * Valida el campo 'edad'.
      */
     fun verificarEdad(): Boolean {
-        if(!repository.validacionEdad()) {
+        return if (!repository.validacionEdad()) {
             mensajesError.edad = "La edad debe ser un número entre 18 y 120"
-            return false
+            false
         } else {
             mensajesError.edad = ""
-            return true
+            true
         }
     }
 
     /**
-     * Valida si los términos y condiciones han sido aceptados.
-     * Actualiza el mensaje de error correspondiente y retorna el resultado de la validación.
+     * Valida si la casilla de términos y condiciones fue marcada.
      */
     fun verificarTerminos(): Boolean {
-        if(!repository.validacionTerminos()) {
+        return if (!repository.validacionTerminos()) {
             mensajesError.terminos = "Debes aceptar los términos"
-            return false
+            false
         } else {
             mensajesError.terminos = ""
-            return true
+            true
         }
     }
 }
