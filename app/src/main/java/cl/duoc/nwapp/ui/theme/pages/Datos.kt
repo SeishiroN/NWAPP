@@ -2,7 +2,6 @@
 
 package cl.duoc.nwapp.ui.theme.pages
 
-import android.widget.Toast // Import para mostrar mensajes emergentes (Toasts).
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn // Componente para mostrar listas largas de forma eficiente.
@@ -13,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType // Define el tipo de teclado a mostrar.
 import androidx.compose.ui.unit.dp
@@ -28,19 +26,15 @@ fun CrearDatos(
     navController: NavController,
 ) {
     // --- RECOLECCIÓN DE ESTADOS DEL VIEWMODEL ---
-    // La UI se suscribe a los StateFlows del ViewModel. `collectAsState` asegura que la UI
-    // se "recomponga" (actualice) automáticamente cada vez que uno de estos valores cambia.
-    val datos by viewModel.datos.collectAsState() // Estado de la lista de ubicaciones.
-    val nombre by viewModel.nombre.collectAsState() // Estado del campo de texto "nombre".
-    val latitud by viewModel.latitud.collectAsState() // Estado del campo de texto "latitud".
-    val longitud by viewModel.longitud.collectAsState() // Estado del campo de texto "longitud".
+    val datos by viewModel.datos.collectAsState()
+    val nombre by viewModel.nombre.collectAsState()
+    val latitud by viewModel.latitud.collectAsState()
+    val longitud by viewModel.longitud.collectAsState()
 
-    // Estados para los errores de validación. La UI los usará para mostrar mensajes en rojo.
+    // Estados para los errores de validación.
     val nombreError by viewModel.nombreError.collectAsState()
     val latitudError by viewModel.latitudError.collectAsState()
     val longitudError by viewModel.longitudError.collectAsState()
-
-    val context = LocalContext.current // Contexto necesario para crear Toasts.
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -55,19 +49,23 @@ fun CrearDatos(
 
         // --- FORMULARIO DE INGRESO DE DATOS ---
         OutlinedTextField(
-            value = nombre, // El valor del campo viene del ViewModel.
-            onValueChange = { viewModel.nombre.value = it }, // Cualquier cambio actualiza el ViewModel.
+            value = nombre,
+            onValueChange = {
+                viewModel.nombre.value = it
+                viewModel.validarNombre() // Valida en tiempo real.
+            },
             label = { Text("Nombre") },
-            singleLine = true, // Evita que el texto salte a una nueva línea.
-            isError = nombreError.isNotEmpty(), // El campo se marca en rojo si hay un mensaje de error.
-            // Muestra el texto de error debajo del campo si no está vacío.
+            singleLine = true,
+            isError = nombreError.isNotEmpty(),
             supportingText = { if (nombreError.isNotEmpty()) Text(nombreError, color = Color.Red) }
         )
         OutlinedTextField(
             value = latitud,
-            onValueChange = { viewModel.latitud.value = it.replace(',', '.') }, // Reemplaza comas por puntos al escribir.
+            onValueChange = {
+                viewModel.latitud.value = it.replace(',', '.')
+                viewModel.validarLatitud() // Valida en tiempo real.
+            },
             label = { Text("Latitud") },
-            // Muestra un teclado numérico que acepta decimales y signos.
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             singleLine = true,
             isError = latitudError.isNotEmpty(),
@@ -75,7 +73,10 @@ fun CrearDatos(
         )
         OutlinedTextField(
             value = longitud,
-            onValueChange = { viewModel.longitud.value = it.replace(',', '.') },
+            onValueChange = {
+                viewModel.longitud.value = it.replace(',', '.')
+                viewModel.validarLongitud() // Valida en tiempo real.
+            },
             label = { Text("Longitud") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             singleLine = true,
@@ -87,16 +88,12 @@ fun CrearDatos(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround // Distribuye los botones con espacio entre ellos.
+            horizontalArrangement = Arrangement.SpaceAround
         ) {
             Button(onClick = {
-                // La lógica se delega al ViewModel. La UI solo pregunta si los campos son válidos.
                 if (viewModel.validarCampos()) {
-                    // Si es válido, se crea el objeto `Datos` y se llama a la función del ViewModel.
                     viewModel.agregarDatos(Datos(nombre = nombre, latitud = latitud, longitud = longitud))
-                    Toast.makeText(context, "Dato agregado con éxito", Toast.LENGTH_SHORT).show()
-
-                    // Limpiar los campos después de un ingreso exitoso.
+                    // Se limpia el formulario silenciosamente tras el éxito.
                     viewModel.nombre.value = ""
                     viewModel.latitud.value = ""
                     viewModel.longitud.value = ""
@@ -106,10 +103,8 @@ fun CrearDatos(
             }
 
             Button(onClick = {
-                // La lista `datos` está ordenada por ID descendente (ver DAO).
-                // `firstOrNull()` obtiene el primer elemento (el último agregado) de forma segura.
                 datos.firstOrNull()?.let { ultimoDato ->
-                    viewModel.eliminarDatos(ultimoDato) // Llama a la función de eliminar del ViewModel.
+                    viewModel.eliminarDatos(ultimoDato)
                 }
             }) {
                 Text("Borrar último dato")
@@ -118,27 +113,23 @@ fun CrearDatos(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // --- LISTA DE DATOS REGISTRADOS ---
-        // `LazyColumn` es la versión de Compose de `RecyclerView`. Solo renderiza los elementos
-        // que son visibles en pantalla, haciéndola muy eficiente para listas largas.
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp), // Espacio entre cada ítem.
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            // `items(datos)` le dice a la LazyColumn que use la lista `datos` como fuente.
-            items(datos) { dato -> // `dato` es cada elemento individual de la lista.
+            items(datos) { dato ->
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(text = dato.nombre, modifier = Modifier.weight(1f)) // `weight(1f)` hace que cada Text ocupe un espacio equitativo.
+                    Text(text = dato.nombre, modifier = Modifier.weight(1f))
                     Text(text = dato.latitud, modifier = Modifier.weight(1f))
                     Text(text = dato.longitud, modifier = Modifier.weight(1f))
                 }
-                Divider() // Una línea divisoria debajo de cada fila.
+                Divider()
             }
         }
-        Button(onClick = { navController.popBackStack() }) { // `popBackStack` navega a la pantalla anterior.
+        Button(onClick = { navController.popBackStack() }) { 
             Text("Regresar")
         }
     }
