@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color // Import específico para el color rojo.
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import cl.duoc.nwapp.R // Necesario para acceder a recursos como imágenes (R.drawable.nwa).
@@ -62,6 +63,7 @@ fun FormularioCrearCuenta(
             isError = !viewModel.verificarNombre(), // El campo se marca en rojo si la validación en el ViewModel falla.
             // `supportingText` muestra un texto de ayuda o error debajo del campo.
             supportingText = { Text(viewModel.mensajesError.nombre, color = Color.Red) },
+            textStyle = TextStyle(color = Color.Black)
         )
 
         OutlinedTextField(
@@ -70,6 +72,7 @@ fun FormularioCrearCuenta(
             label = { Text("Ingresa correo") },
             isError = !viewModel.verificarCorreo(),
             supportingText = { Text(viewModel.mensajesError.correo, color = Color.Red) },
+            textStyle = TextStyle(color = Color.Black)
         )
 
         OutlinedTextField(
@@ -78,6 +81,7 @@ fun FormularioCrearCuenta(
             label = { Text("Ingresa edad") },
             isError = !viewModel.verificarEdad(),
             supportingText = { Text(viewModel.mensajesError.edad, color = Color.Red) },
+            textStyle = TextStyle(color = Color.Black)
         )
 
         // `Checkbox` es una casilla de verificación.
@@ -108,7 +112,7 @@ fun FormularioCrearCuenta(
             AlertDialog(
                 onDismissRequest = { }, // Se deja vacío para forzar al usuario a presionar el botón.
                 title = { Text("Confirmación") },
-                text = { Text("Usted puede ingresar a la aplicación") },
+                text = { Text("Usted ha ingresado con éxito") },
                 confirmButton = {
                     Button(onClick = {
                         abrirModal = false // Oculta el modal.

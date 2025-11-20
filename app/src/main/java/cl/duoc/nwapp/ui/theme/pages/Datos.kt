@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType // Define el tipo de teclado a mostrar.
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -57,7 +58,8 @@ fun CrearDatos(
             label = { Text("Nombre") },
             singleLine = true,
             isError = nombreError.isNotEmpty(),
-            supportingText = { if (nombreError.isNotEmpty()) Text(nombreError, color = Color.Red) }
+            supportingText = { if (nombreError.isNotEmpty()) Text(nombreError, color = Color.Red) },
+            textStyle = TextStyle(color = Color.Black)
         )
         OutlinedTextField(
             value = latitud,
@@ -69,7 +71,8 @@ fun CrearDatos(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             singleLine = true,
             isError = latitudError.isNotEmpty(),
-            supportingText = { if (latitudError.isNotEmpty()) Text(latitudError, color = Color.Red) }
+            supportingText = { if (latitudError.isNotEmpty()) Text(latitudError, color = Color.Red) },
+            textStyle = TextStyle(color = Color.Black)
         )
         OutlinedTextField(
             value = longitud,
@@ -81,7 +84,8 @@ fun CrearDatos(
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             singleLine = true,
             isError = longitudError.isNotEmpty(),
-            supportingText = { if (longitudError.isNotEmpty()) Text(longitudError, color = Color.Red) }
+            supportingText = { if (longitudError.isNotEmpty()) Text(longitudError, color = Color.Red) },
+            textStyle = TextStyle(color = Color.Black)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
