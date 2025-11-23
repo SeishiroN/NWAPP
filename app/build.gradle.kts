@@ -9,7 +9,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     // Plugin para el procesador de anotaciones de Kotlin (kapt), necesario para Room.
     id("org.jetbrains.kotlin.kapt")
-
 }
 
 android {
@@ -31,7 +30,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -45,6 +44,18 @@ android {
     buildFeatures {
         compose = true // Habilita explícitamente el uso de Jetpack Compose.
     }
+    // --- FIX ---
+    // Este bloque resuelve conflictos cuando múltiples librerías JAR incluyen
+    // archivos con el mismo nombre y ruta (común en archivos META-INF).
+    packaging {
+        // Le dice a Gradle que excluya estos archivos específicos para evitar el error de duplicados.
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/INDEX.LIST"
+            excludes += "/META-INF/DEPENDENCIES"
+            excludes += "/META-INF/io.netty.versions.properties"
+        }
+    }
 }
 
 val nav_version = "2.7.7" // Variable para unificar la versión de todas las dependencias de Navigation.
@@ -52,6 +63,10 @@ val coil_version = "2.6.0" // Variable para unificar la versión de Coil.
 
 dependencies {
 
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     // --- Core & Lifecycle ---
     implementation(libs.androidx.core.ktx) // Extensiones de Kotlin para las APIs core de Android.
     implementation(libs.androidx.lifecycle.runtime.ktx) // Provee el `lifecycleScope` y otras utilidades de ciclo de vida.
@@ -63,7 +78,8 @@ dependencies {
     implementation(libs.androidx.compose.ui) // Componentes fundamentales de la UI de Compose (Modifiers, Layouts, etc.).
     implementation(libs.androidx.compose.ui.graphics) // Clases de gráficos para Compose (Color, Brush, etc.).
     implementation(libs.androidx.compose.ui.tooling.preview) // Permite previsualizar Composables en el editor de Android Studio.
-    implementation(libs.androidx.compose.material3) // La última versión de los componentes de Material Design para Compose.
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.firebase.appdistribution.gradle) // La última versión de los componentes de Material Design para Compose.
     debugImplementation(libs.androidx.compose.ui.tooling) // Herramientas de inspección de la UI de Compose.
 
     // --- Navigation ---

@@ -1,43 +1,32 @@
+
 package cl.duoc.nwapp.repository
 
-import cl.duoc.nwapp.model.FormularioModel
-import cl.duoc.nwapp.model.MensajesError
+import cl.duoc.nwapp.data.model.LoginRequest
+import cl.duoc.nwapp.data.remote.RetrofitInstance
 
-// logica del repositorio
-class  FormularioRepository {
+/**
+ * --- REPOSITORIO DEFINITIVO ---
+ * Simplificado para usar la nueva y correcta instancia de Retrofit.
+ */
+class FormularioRepository {
+    // La URL completa que causa el problema con Retrofit.
+    private val loginUrl = "https://x8ki-letl-twmt.n7.xano.io/api:SzTlK1GN/auth/login"
 
+    suspend fun validarLogin(
+        email: String,
+        password: String,
+    ): Boolean {
+        if (email.isBlank() || password.isBlank()) return false
 
-    private var formulario = FormularioModel()
-    private var errores = MensajesError()
+        val request = LoginRequest(email = email, password = password)
 
-
-    fun getFormulario():  FormularioModel = formulario
-    fun getMensajesError():  MensajesError = errores
-
-
-
-    // verifica si el nombre es igual a la valor que se le introdujo, validación con datos en bruto
-    fun validacionNombre(): Boolean {
-
-        return formulario.nombre == "ADMIN"
-    }
-
-    //validación de formato de correo según patrón indicado
-    fun validacionCorreo(): Boolean {
-
-        return formulario.correo.matches(Regex("^[\\w.-]+@[\\w.-]+\\.\\w+$"))
-    }
-
-    //validación de rango de edad
-    fun validacionEdad(): Boolean {
-
-        val edadInt = formulario.edad.toIntOrNull()
-        return edadInt != null && edadInt >= 18 && edadInt <= 120
-    }
-
-
-    //validación si tiene el check puesto
-    fun validacionTerminos(): Boolean {
-        return formulario.terminos
+        return try {
+            // Llama a la función del ApiService pasando la URL completa y la petición.
+            val response = RetrofitInstance.api.login(request = request)
+            response.isSuccessful
+        } catch (t: Throwable) {
+            t.printStackTrace()
+            false
+        }
     }
 }
