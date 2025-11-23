@@ -1,6 +1,7 @@
 package cl.duoc.nwapp.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope // Importa el ámbito de corrutinas atado al ciclo de vida del ViewModel.
 import cl.duoc.nwapp.model.Datos
 import cl.duoc.nwapp.repository.DatosRepository
@@ -103,5 +104,17 @@ class DatosViewModel(
         val latitudValida = validarLatitud()
         val longitudValida = validarLongitud()
         return nombreValido && latitudValida && longitudValida
+    }
+
+    companion object {
+        fun Factory(repository: DatosRepository): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                if (modelClass.isAssignableFrom(DatosViewModel::class.java)) {
+                    @Suppress("UNCHECKED_CAST")
+                    return DatosViewModel(repository) as T
+                }
+                throw IllegalArgumentException("Unknown ViewModel class")
+            }
+        }
     }
 }

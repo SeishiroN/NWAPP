@@ -2,11 +2,7 @@ package cl.duoc.nwapp.ui.theme.pages
 
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.layout.* // Importa todos los layouts básicos de Compose (Column, Row, Spacer, etc.).
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.* // Importa los elementos clave del runtime de Compose (Composable, remember, State, etc.).
 import androidx.compose.ui.Alignment
@@ -30,8 +26,6 @@ import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun MainScreen(navController: NavController, viewModel: DatosViewModel) {
-    // Estado para guardar el texto de la barra de búsqueda.
-    var searchQuery by remember { mutableStateOf("") }
     // `collectAsState` se suscribe al Flow de `datos` del ViewModel. Cada vez que la lista
     // de ubicaciones en la BD cambia, `ubicaciones` se actualiza y la UI se recompone.
     val ubicaciones by viewModel.datos.collectAsState()
@@ -57,14 +51,6 @@ fun MainScreen(navController: NavController, viewModel: DatosViewModel) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        OutlinedTextField(
-            value = searchQuery,
-            onValueChange = { searchQuery = it },
-            label = { Text("Buscar...") },
-            leadingIcon = { Icon(Icons.Default.Search, "Icono de búsqueda") },
-            modifier = Modifier.fillMaxWidth(),
-        )
-
         Spacer(modifier = Modifier.height(16.dp)) // Espacio vertical.
 
         val miUbicacion = LatLng(-33.49936500787212, -70.61654033901539)
