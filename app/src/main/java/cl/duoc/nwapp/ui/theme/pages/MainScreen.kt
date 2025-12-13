@@ -110,6 +110,13 @@ fun MainScreen(navController: NavController, viewModel: DatosViewModel) {
             Text("Ver Historial")
         }
 
+        Spacer(modifier = Modifier.height(8.dp)) // Espacio menor
+
+        // Botón para el Manual de Usuario
+        Button(onClick = { navController.navigate("manual") }) {
+            Text("Manual de Usuario")
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         AsyncImage(

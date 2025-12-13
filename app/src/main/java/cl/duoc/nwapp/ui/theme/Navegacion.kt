@@ -9,11 +9,14 @@ import androidx.navigation.compose.NavHost // Es el contenedor que aloja las dif
 import androidx.navigation.compose.composable // Define una "ruta" o pantalla dentro del NavHost.
 import androidx.navigation.compose.rememberNavController // Crea y recuerda el controlador de navegación.
 import androidx.room.Room // El constructor principal para crear una instancia de la base de datos Room.
+import cl.duoc.nwapp.data.remote.RetrofitInstance
+import cl.duoc.nwapp.data.repository.AuthRepository
 import cl.duoc.nwapp.model.AppDatabase
 import cl.duoc.nwapp.repository.DatosRepository
-import cl.duoc.nwapp.ui.theme.pages.* // Importa todas las pantallas que hemos creado.
+import cl.duoc.nwapp.ui.theme.pages.*
 import cl.duoc.nwapp.viewmodel.DatosViewModel
 import cl.duoc.nwapp.viewmodel.FormularioViewModel
+import cl.duoc.nwapp.viewmodel.SignupViewModel
 
 @Composable
 fun Navegacion() {
@@ -28,18 +31,18 @@ fun Navegacion() {
             "app_database"
         ).build()
     }
-    val repository = remember { DatosRepository(database.datosDao()) }
+    val datosRepository = remember { DatosRepository(database.datosDao()) }
+    val authRepository = remember { AuthRepository(RetrofitInstance.api) }
 
     // Instancia única del ViewModel que se compartirá entre todas las pantallas que lo necesiten.
-    // Usamos la Factory que creamos en el companion object de DatosViewModel.
-    val datosViewModel: DatosViewModel = viewModel(factory = DatosViewModel.Factory(repository))
+    val datosViewModel: DatosViewModel = viewModel(factory = DatosViewModel.Factory(datosRepository))
 
     NavHost(navController, startDestination = "pagina1") {
         composable("pagina1") { PrimeraPantalla(navController) }
 
         composable("pagina2") {
             val formularioViewModel: FormularioViewModel = viewModel()
-            FormularioCrearCuenta(formularioViewModel, navController)
+            FormularioCrearCuenta(navController = navController)
         }
 
         composable("pagina3") { MainScreen(navController, datosViewModel) }
@@ -48,10 +51,17 @@ fun Navegacion() {
             CrearDatos(datosViewModel, navController)
         }
 
-        // Ruta para la nueva pantalla de Historial.
-        // Le pasamos la MISMA instancia de `datosViewModel` que usan las otras pantallas.
         composable("historial") {
             HistorialScreen(navController, datosViewModel)
+        }
+
+        composable("manual") { 
+            ManualScreen(navController)
+        }
+
+        composable("signup") { 
+            val signupViewModel: SignupViewModel = viewModel(factory = SignupViewModel.Factory(authRepository))
+            SignupScreen(navController, signupViewModel)
         }
     }
 }

@@ -8,8 +8,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInstance {
-    // --- THE DEFINITIVE FIX ---
-    // La URL base AHORA TERMINA CON '/', lo que es un requisito de Retrofit.
+    // URL base para ambos endpoints (login y signup están en el mismo API)
     private const val BASE_URL = "https://x8ki-letl-twmt.n7.xano.io/api:SzTlK1GN/"
 
     private val loggingInterceptor =
