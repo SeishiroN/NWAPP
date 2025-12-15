@@ -50,6 +50,12 @@ class DatosViewModel(
         }
     }
 
+    fun actualizarDatos(datos: Datos) {
+        viewModelScope.launch {
+            repository.update(datos)
+        }
+    }
+
     fun eliminarDatos(datos: Datos) {
         viewModelScope.launch {
             repository.delete(datos)

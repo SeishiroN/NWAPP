@@ -42,6 +42,14 @@ class DatosRepository(
     }
 
     /**
+     * Delega la operación de actualización al DAO.
+     * Esto permite modificar un registro existente en la base de datos.
+     */
+    suspend fun update(datos: Datos) {
+        datosDao.update(datos)
+    }
+
+    /**
      * Delega la operación de eliminación al DAO.
      */
     suspend fun delete(datos: Datos) {
